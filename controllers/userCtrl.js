@@ -22,7 +22,7 @@ exports.userCtrl = {
   },
   async getUser(req, res) {
     try {
-      let theUser = await userModel.findOne({ username: req.body.username });
+      let theUser = await userModel.findOne({ username: req.query.username });
       if (theUser) {
         res.status(200).json(theUser);
       }

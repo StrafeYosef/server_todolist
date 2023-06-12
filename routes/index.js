@@ -1,6 +1,6 @@
 const router = require("express").Router();
 
-router.get("/", (req, res) => console.log("Momo"));
+router.get("/", (req, res) => res.json("Momo"));
 
 module.exports = router;
  

@@ -75,4 +75,12 @@ async function verify() {
 }
 verify().catch(console.error);
 }
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6Ik1vc2hlIiwiaWF0IjoxNjg2NDg0ODM5LCJleHAiOjE2ODkwNzY4Mzl9.ebI9MB0ARlt4hBC3pmduOwSvtEB2p44gfI9wma_ieso
+
+{
+  "username": "stam",
+  "adminToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6Ik1vc2hlIiwiaWF0IjoxNjg2NDg0ODM5LCJleHAiOjE2ODkwNzY4Mzl9.ebI9MB0ARlt4hBC3pmduOwSvtEB2p44gfI9wma_ieso",
+  "rank": "magad",
+  "role": "idk",
+  "access": "user",
+  "token": "gdsgsdhshshsdhshshsh"
+}

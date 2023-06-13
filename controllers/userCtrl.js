@@ -12,7 +12,7 @@ exports.userCtrl = {
         if(admin.access === 'admin'){
           let newUser = await userModel.findOne({ username: req.body.username });
           if (newUser) {
-            return res.status(400).json({ error: "username already exists" });
+            return res.status(400).json({ error: "username already exists" })
           }
           const payload = { username: req.body.username };
           const token = jwt.sign(payload, process.env.SECRET, { expiresIn: "30d" });

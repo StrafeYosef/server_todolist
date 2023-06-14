@@ -11,7 +11,7 @@ const userSchema = mongoose.Schema({
     required: true,
     unique: true,
   },
-  rank: {
+  unit: {
     type: String,
     required: true,
   },
@@ -28,6 +28,18 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
     unique: true,
+  },
+  level_1: {
+    type: String,
+    required: true,
+  },
+  level_2: {
+    type: String,
+    required: true,
+  },
+  level_3: {
+    type: String,
+    required: false,
   },
 });
 

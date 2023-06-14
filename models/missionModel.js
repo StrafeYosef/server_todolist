@@ -9,6 +9,7 @@ const missionSchema = mongoose.Schema({
   token: {
     type: String,
     required: true,
+    unique: true
   },
   title: {
     type: String,
@@ -43,6 +44,7 @@ const missionSchema = mongoose.Schema({
   missionId: {
     type: String,
     required: true,
+    unique: true
   },
 
 });

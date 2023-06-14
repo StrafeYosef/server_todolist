@@ -5,7 +5,7 @@ require("dotenv").config();
 
 exports.userCtrl = {
   //admin panel
-  async setUser(req, res) {
+  async setNewUser(req, res) {
     try {
       let admin = await userModel.findOne({token: req.body.adminToken});
       if(admin){
@@ -30,10 +30,17 @@ exports.userCtrl = {
   },
   async getUser(req, res) {
     try {
-        let theUser = await userModel.findOne({ username: req.query.username });
+      if(req.query.username && req.query.id){
+        let theUser = await userModel.findOne({ username: req.query.username, id: req.query.id });
         if (theUser) {
           res.status(200).json(theUser);
         }
+      } else if(req.query.token) {
+        let theUser = await userModel.findOne({ token: req.query.token });
+        if (theUser) {
+          res.status(200).json(theUser);
+        }
+      }  
     } catch (error) {
       console.log(error);
     }

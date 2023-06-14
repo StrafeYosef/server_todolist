@@ -3,10 +3,10 @@ const userModel = require('../models/userModel');
 exports.missionCtrl = {
     async addMission(req, res) {
       try {
-        let mission = await missionModel.findOne(req.body);
-        if(mission){
-          return res.status(400).json({err: 'Duplicate misssion'});
-        }
+        // let mission = await missionModel.findOne(req.body);
+        // if(mission){
+        //   return res.status(400).json({err: 'Duplicate misssion'});
+        // }
         mission = missionModel(req.body);
         mission.save();
         return res.status(200).json(mission);

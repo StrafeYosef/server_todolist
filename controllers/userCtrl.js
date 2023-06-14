@@ -21,6 +21,7 @@ exports.userCtrl = {
           newUser.save();
           let user = {...req.body};
           delete user.adminToken;
+          console.log(user);
           res.status(200).json(user);
         }
       }

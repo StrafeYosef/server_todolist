@@ -18,7 +18,6 @@ const userSchema = mongoose.Schema({
   role: {
     type: String,
     required: true,
-    unique: true,
   },
   access: {
     type: String,

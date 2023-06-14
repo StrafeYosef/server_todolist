@@ -1,4 +1,5 @@
 const missionModel = require('../models/missionModel');
+const userModel = require('../models/userModel');
 exports.missionCtrl = {
     async addMission(req, res) {
       try {
@@ -13,8 +14,13 @@ exports.missionCtrl = {
         return res.status(500).json({err: 'fail'});
       }
     },
-    async getMissions(req, res) {
-     
+    async getAllMissions(req, res) {
+      let user = await userModel.findOne({token: req.query.token});
+      if(!user){
+        return res.status(400).json({err:'User not found'});
+      }
+      let missions = await missionModel.find({});
+      return res.status(200).json(missions);
     },
   };
   

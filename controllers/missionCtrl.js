@@ -19,7 +19,8 @@ exports.missionCtrl = {
       if(!user){
         return res.status(400).json({err:'User not found'});
       }
-      return res.status(200).json(user);
+      let missions = await missionModel.find({});
+      return res.status(200).json(missions);
     },
   };
   

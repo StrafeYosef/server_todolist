@@ -73,5 +73,5 @@ async function verify() {
   // If request specified a G Suite domain:
   // const domain = payload['hd'];
 }
-verify().catch(console.error);
+verify().catch(console.error)
 }

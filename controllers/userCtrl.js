@@ -21,7 +21,7 @@ exports.userCtrl = {
           await newUser.save();
           let user = {...req.body};
           delete user.adminToken;
-          res.status(200).json(user);
+          return res.status(200).json(user);
         }
       }
     } catch (error) {
@@ -33,19 +33,19 @@ exports.userCtrl = {
       if(req.query.username && req.query.id){
         let theUser = await userModel.findOne({ username: req.query.username, id: req.query.id });
         if (theUser) {
-          res.status(200).json(theUser);
+          return res.status(200).json(theUser);
         }
       } else if(req.query.token) {
         let theUser = await userModel.findOne({ token: req.query.token });
         if (theUser) {
-          res.status(200).json(theUser);
+          return res.status(200).json(theUser);
         }
       }  
     } catch (error) {
       console.log(error);
     }
   },
-  async getUsers(req, res) {
+  async getAllUsers(req, res) {
     try {
       if (req.query.access === "admin") {
         const newUser = await userModel.findOne({

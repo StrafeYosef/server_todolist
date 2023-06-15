@@ -28,8 +28,8 @@ exports.userCtrl = {
       console.log(error);
     }
   },
-  async getUser(req, res) {
-    try {
+  async getUser(req, res) {    
+    try {      
       if(req.query.username && req.query.id){
         let theUser = await userModel.findOne({ username: req.query.username, id: req.query.id });
         if (theUser) {
@@ -41,6 +41,9 @@ exports.userCtrl = {
           return res.status(200).json(theUser);
         }
       }  
+      } else {
+        return res.status(402).json({err: 'valid Email or client ID'});
+      }
     } catch (error) {
       console.log(error);
     }

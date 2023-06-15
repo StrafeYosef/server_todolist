@@ -1,10 +1,11 @@
 const mongoose = require("mongoose");
 
 const missionSchema = mongoose.Schema({
-  givenIn: {
-    type: String,
-    required: true,
-  },
+  // givenIn: {
+  //   type: String,
+  //   required: true,
+  // },
+  // token of user 
   token: {
     type: String,
     required: true,
@@ -17,7 +18,7 @@ const missionSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  summary: {
+  daysLeft: {
     type: String,
     required: true,
   },
@@ -33,14 +34,18 @@ const missionSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  subject: {
+  status: {
     type: String,
     required: true,
   },
-  belonging: {
+  noteResponsibility: String,
+  noteCommand: String,
+  missionId: {
     type: String,
     required: true,
+    unique: true
   },
+
 });
 
 module.exports = mongoose.model("missions", missionSchema);

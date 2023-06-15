@@ -5,7 +5,7 @@ require("dotenv").config();
 
 exports.userCtrl = {
   //admin panel
-  async setUser(req, res) {
+  async setNewUser(req, res) {
     try {
       let admin = await userModel.findOne({token: req.body.adminToken});
       if(admin){
@@ -18,10 +18,10 @@ exports.userCtrl = {
           const token = jwt.sign(payload, process.env.SECRET, { expiresIn: "30d" });
           req.body.token = token;
           newUser = userModel(req.body);
-          newUser.save();
+          await newUser.save();
           let user = {...req.body};
           delete user.adminToken;
-          res.status(200).json(user);
+          return res.status(200).json(user);
         }
       }
     } catch (error) {
@@ -33,8 +33,14 @@ exports.userCtrl = {
       if(req.query.username && req.query.id){
         let theUser = await userModel.findOne({ username: req.query.username, id: req.query.id });
         if (theUser) {
-          res.status(200).json(theUser);
+          return res.status(200).json(theUser);
         }
+      } else if(req.query.token) {
+        let theUser = await userModel.findOne({ token: req.query.token });
+        if (theUser) {
+          return res.status(200).json(theUser);
+        }
+      }  
       } else {
         return res.status(402).json({err: 'valid Email or client ID'});
       }
@@ -42,7 +48,7 @@ exports.userCtrl = {
       console.log(error);
     }
   },
-  async getUsers(req, res) {
+  async getAllUsers(req, res) {
     try {
       if (req.query.access === "admin") {
         const newUser = await userModel.findOne({
@@ -58,20 +64,4 @@ exports.userCtrl = {
     }
   },
 };
-const verifyToken = (client_id, token)=>{
-const client = new OAuth2Client(client_id);
-async function verify() {
-  const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: client_id,  // Specify the CLIENT_ID of the app that accesses the backend
-      // Or, if multiple clients access the backend:
-      //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
-  });
-  const payload = ticket.getPayload();
-  const userid = payload['sub'];
-  return true;
-  // If request specified a G Suite domain:
-  // const domain = payload['hd'];
-}
-verify().catch(console.error);
-}
+

@@ -9,7 +9,6 @@ const missionSchema = mongoose.Schema({
   token: {
     type: String,
     required: true,
-    unique: true
   },
   title: {
     type: String,

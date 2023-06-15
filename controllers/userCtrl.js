@@ -18,10 +18,9 @@ exports.userCtrl = {
           const token = jwt.sign(payload, process.env.SECRET, { expiresIn: "30d" });
           req.body.token = token;
           newUser = userModel(req.body);
-          newUser.save();
+          await newUser.save();
           let user = {...req.body};
           delete user.adminToken;
-          console.log(user);
           res.status(200).json(user);
         }
       }

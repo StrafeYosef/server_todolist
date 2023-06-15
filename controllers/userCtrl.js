@@ -7,13 +7,13 @@ exports.userCtrl = {
   //admin panel
   async setNewUser(req, res) {
     try {
-      let admin = await userModel.findOne({token: req.body.adminToken});
-      if(admin){
-        if(admin.access === 'admin'){
-          let newUser = await userModel.findOne({ username: req.body.username });
-          if (newUser) {
-            return res.status(400).json({ error: "username already exists" })
-          }
+      // let admin = await userModel.findOne({token: req.body.adminToken});
+      // if(admin){
+      //   if(admin.access === 'admin'){
+      //     let newUser = await userModel.findOne({ username: req.body.username });
+      //     if (newUser) {
+      //       return res.status(400).json({ error: "username already exists" })
+      //     }
           const payload = { username: req.body.username };
           const token = jwt.sign(payload, process.env.SECRET, { expiresIn: "30d" });
           req.body.token = token;
@@ -22,8 +22,8 @@ exports.userCtrl = {
           let user = {...req.body};
           delete user.adminToken;
           return res.status(200).json(user);
-        }
-      }
+        // }
+      // }
     } catch (error) {
       console.log(error);
     }

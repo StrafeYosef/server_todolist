@@ -40,7 +40,6 @@ exports.userCtrl = {
         if (theUser) {
           return res.status(200).json(theUser);
         }
-      }  
       } else {
         return res.status(402).json({err: 'valid Email or client ID'});
       }

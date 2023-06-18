@@ -4,7 +4,6 @@ exports.missionCtrl = {
     async addMission(req, res) {
       try {
         let user = await userModel.findOne({token: req.body.token});
-
         if(!user){
           return res.status(400).json({err:'User not found'});
         }

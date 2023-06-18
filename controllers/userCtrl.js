@@ -9,7 +9,7 @@ exports.userCtrl = {
     try {
       let admin = await userModel.findOne({token: req.body.adminToken});
       if(admin){
-        if(admin.access === 'מנהל'){
+        if(admin.access === 'admin'){
           let newUser = await userModel.findOne({ username: req.body.username });
           if (newUser) {
             return res.status(400).json({ error: "username already exists" })
@@ -49,15 +49,46 @@ exports.userCtrl = {
   },
   async getAllUsers(req, res) {
     try {
-      if (req.query.access === "מנהל") {
+      if (req.query.access === "admin") {
         const newUser = await userModel.findOne({
           username: req.query.username,
         });
-        if (newUser.access === "מנהל") {
+        if (newUser.access === "admin") {
           const users = await userModel.find({});
           return res.status(200).json(users);
         }
       }
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  async updateUser(req, res) {
+    try {
+      if (req.body.adminToken) {
+        const admin = await userModel.findOne({
+          token: req.body.adminToken,
+        });
+        if(!admin || admin.access !== "admin") return  res.status(400).json({err: "Not allowed"});
+        const user = await userModel.findOne({
+          username: req.body.username,
+          id: req.body.username,
+          unit: req.body.unit,
+          role: req.body.role,
+          token: req.body.token,
+          level_1: req.body.level_1,
+          level_2: req.body.level_2,
+          level_3: req.body.level_3,
+        });
+        if(!user) return res.status(400).json({err: "user not found"});
+        let currUser = {...req.body};
+        delete currUser.adminToken;
+        delete currUser._id;
+        currUser = await userModel.findOneAndReplace({username: currUser.username}, currUser);
+        currUser = await userModel.findOne({
+          username: currUser.username,
+        });
+        return res.status(200).json(currUser);
+      } 
     } catch (error) {
       console.log(error);
     }

@@ -1,25 +1,29 @@
 const userModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
-const {OAuth2Client} = require('google-auth-library');
+const { OAuth2Client } = require("google-auth-library");
 require("dotenv").config();
 
 exports.userCtrl = {
   //admin panel
   async setNewUser(req, res) {
     try {
-      let admin = await userModel.findOne({token: req.body.adminToken});
-      if(admin){
-        if(admin.access === 'admin'){
-          let newUser = await userModel.findOne({ username: req.body.username });
+      let admin = await userModel.findOne({ token: req.body.adminToken });
+      if (admin) {
+        if (admin.access === "admin") {
+          let newUser = await userModel.findOne({
+            username: req.body.username,
+          });
           if (newUser) {
-            return res.status(400).json({ error: "username already exists" })
+            return res.status(400).json({ error: "username already exists" });
           }
           const payload = { username: req.body.username };
-          const token = jwt.sign(payload, process.env.SECRET, { expiresIn: "30d" });
+          const token = jwt.sign(payload, process.env.SECRET, {
+            expiresIn: "30d",
+          });
           req.body.token = token;
           newUser = userModel(req.body);
           await newUser.save();
-          let user = {...req.body};
+          let user = { ...req.body };
           delete user.adminToken;
           return res.status(200).json(user);
         }
@@ -28,20 +32,23 @@ exports.userCtrl = {
       console.log(error);
     }
   },
-  async getUser(req, res) {    
-    try {      
-      if(req.query.username && req.query.id){
-        let theUser = await userModel.findOne({ username: req.query.username, id: req.query.id });
+  async getUser(req, res) {
+    try {
+      if (req.query.username && req.query.id) {
+        let theUser = await userModel.findOne({
+          username: req.query.username,
+          id: req.query.id,
+        });
         if (theUser) {
           return res.status(200).json(theUser);
         }
-      } else if(req.query.token) {
+      } else if (req.query.token) {
         let theUser = await userModel.findOne({ token: req.query.token });
         if (theUser) {
           return res.status(200).json(theUser);
         }
       } else {
-        return res.status(402).json({err: 'valid Email or client ID'});
+        return res.status(402).json({ err: "valid Email or client ID" });
       }
     } catch (error) {
       console.log(error);
@@ -68,7 +75,8 @@ exports.userCtrl = {
         const admin = await userModel.findOne({
           token: req.body.adminToken,
         });
-        if(!admin || admin.access !== "admin") return  res.status(400).json({err: "Not allowed"});
+        if (!admin || admin.access !== "admin")
+          return res.status(400).json({ err: "Not allowed" });
         const user = await userModel.findOne({
           username: req.body.username,
           id: req.body.username,
@@ -79,19 +87,38 @@ exports.userCtrl = {
           level_2: req.body.level_2,
           level_3: req.body.level_3,
         });
-        if(!user) return res.status(400).json({err: "user not found"});
-        let currUser = {...req.body};
+        if (!user) return res.status(400).json({ err: "user not found" });
+        let currUser = { ...req.body };
         delete currUser.adminToken;
         delete currUser._id;
-        currUser = await userModel.findOneAndReplace({username: currUser.username}, currUser);
+        currUser = await userModel.findOneAndReplace(
+          { username: currUser.username },
+          currUser
+        );
         currUser = await userModel.findOne({
           username: currUser.username,
         });
         return res.status(200).json(currUser);
-      } 
+      }
     } catch (error) {
       console.log(error);
     }
   },
+  async deleteUser(req, res) {
+    try {
+      if (req.query.adminToken) {
+        const admin = await userModel.findOne({
+          token: req.query.adminToken,
+        });
+        console.log(admin);
+        console.log(req.query);
+        if (!admin || admin.access !== "admin")
+          return res.status(400).json({ err: "Not allowed" });
+        await userModel.deleteOne({ id: req.query.id });
+        return res.status(200).json({ msg: "success" });
+      }
+    } catch (error) {
+      return res.json({ err: error });
+    }
+  },
 };
-

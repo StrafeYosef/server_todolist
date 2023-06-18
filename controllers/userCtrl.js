@@ -93,5 +93,19 @@ exports.userCtrl = {
       console.log(error);
     }
   },
+  async deleteUser(req, res){
+    try {
+      if (req.query.adminToken) {
+        const admin = await userModel.findOne({
+          token: req.query.adminToken,
+        });
+        if(!admin || admin.access !== "admin") return  res.status(400).json({err: "Not allowed"});
+        await userModel.deleteOne({id: req.query.id});
+        return res.status(200).json({msg: 'success'});
+      }
+    } catch (error) {
+      return res.json({err: error});
+    } 
+  },
 };
 

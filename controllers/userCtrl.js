@@ -1,6 +1,5 @@
 const userModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
-const { OAuth2Client } = require("google-auth-library");
 const { ObjectId } = require("mongodb");
 require("dotenv").config();
 
@@ -83,7 +82,7 @@ exports.userCtrl = {
           id: req.body.id,
           token: req.body.token,
         });
-        if (!user) return res.status(400).json({ err: "user not found" });
+        if (!user) return res.status(400).json({ err: "User not found" });
         let currUser = { ...req.body };
         delete currUser.adminToken;
         delete currUser._id;
@@ -91,10 +90,7 @@ exports.userCtrl = {
           { username: currUser.username },
           currUser
         );
-        currUser = await userModel.findOne({
-          username: currUser.username,
-        });
-        return res.status(200).json(currUser);
+        return res.status(200).json({msg:'Success'});
       }
     } catch (error) {
       return res.status(404).json(error);

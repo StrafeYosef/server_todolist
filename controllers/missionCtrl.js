@@ -1,5 +1,6 @@
 const missionModel = require('../models/missionModel');
 const userModel = require('../models/userModel');
+const {mongoose, isValidObjectId} = require('mongoose')
 exports.missionCtrl = {
     async addMission(req, res) {
       try {
@@ -25,5 +26,20 @@ exports.missionCtrl = {
       }
       let missions = await missionModel.find({});
       return res.status(200).json(missions);
+    },
+    async deleteMission(req, res) {
+      console.log(req.query);
+      try {
+        if (req.query.adminToken) {
+          const admin = await userModel.findOne({
+            token: req.query.adminToken,
+          });
+          if(!admin || admin.access !== "admin") return  res.status(400).json({err: "Not allowed"});
+          await missionModel.deleteOne({_id:  req.query._id});
+          return res.status(200).json({msg: 'Success'});
+        }
+      } catch (error) {
+        return res.json({ err: error });
+      }
     },
   };

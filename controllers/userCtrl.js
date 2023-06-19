@@ -79,7 +79,7 @@ exports.userCtrl = {
           return res.status(400).json({ err: "Not allowed" });
         const user = await userModel.findOne({
           username: req.body.username,
-          id: req.body.username,
+          id: req.body.id,
           token: req.body.token,
         });
         if (!user) return res.status(400).json({ err: "user not found" });
@@ -96,18 +96,19 @@ exports.userCtrl = {
         return res.status(200).json(currUser);
       }
     } catch (error) {
-      console.log(error);
+      return res.status(404).json(error);
     }
   },
   async deleteUser(req, res) {
     try {
+      console.log(req.body, req.query);
       if (req.query.adminToken) {
         const admin = await userModel.findOne({
           token: req.query.adminToken,
         });
-        if(!admin || admin.access !== "admin") return  res.status(400).json({err: "Not allowed"});
+        if(!admin || admin.access !== "admin") return res.status(400).json({err: "Not allowed"});
         await userModel.deleteOne({id: req.query.id});
-        return res.status(200).json({msg: 'success'});
+        return res.status(200).json({msg: 'Success'});
       }
     } catch (error) {
       return res.json({ err: error });

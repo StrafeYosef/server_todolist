@@ -16,6 +16,10 @@ exports.missionCtrl = {
         }
         mission = missionModel(req.body);
         mission = await mission.save();
+        let currUser = {...user._doc};
+        currUser.newMissions = [...user.newMissions, mission._id];
+        delete currUser._id;
+        await userModel.findOneAndReplace({token: mission.token}, currUser);
         return res.status(200).json(mission);
       } catch (error) {
         return res.status(500).json({err: error});

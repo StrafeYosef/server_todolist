@@ -1,7 +1,8 @@
 const { ObjectId } = require('mongodb');
 const missionModel = require('../models/missionModel');
 const userModel = require('../models/userModel');
-const {mongoose, isValidObjectId} = require('mongoose')
+const {mongoose, isValidObjectId} = require('mongoose');
+const { userCtrl } = require('./userCtrl');
 exports.missionCtrl = {
     async addMission(req, res) {
       try {
@@ -14,7 +15,10 @@ exports.missionCtrl = {
           return res.status(400).json({err: 'Duplicate misssion'});
         }
         mission = missionModel(req.body);
-        await mission.save(); 
+        mission = await mission.save(); 
+        user.newMissions = [...user.newMissions, mission._id];
+        delete user._id;
+        await userModel.findOneAndReplace({token: user.token}, user);
         return res.status(200).json(mission);
       } catch (error) {
         return res.status(500).json({err: error});

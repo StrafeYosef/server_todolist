@@ -39,13 +39,12 @@ const missionSchema = mongoose.Schema({
     required: true,
   },
   noteResponsibility: String,
-  noteCommand: String,
+  noteCommander: String,
   missionId: {
     type: String,
     required: true,
     unique: true
   },
-
 });
 
 module.exports = mongoose.model("missions", missionSchema);

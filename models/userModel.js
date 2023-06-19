@@ -40,6 +40,10 @@ const userSchema = mongoose.Schema({
     type: String,
     required: false,
   },
+  newMissions: {
+    type: Array,
+    required: false,
+  },
 });
 
 module.exports = mongoose.model("users", userSchema);

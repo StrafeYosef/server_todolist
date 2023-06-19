@@ -107,7 +107,7 @@ exports.userCtrl = {
           token: req.query.adminToken,
         });
         if(!admin || admin.access !== "admin") return res.status(400).json({err: "Not allowed"});
-        await userModel.deleteOne({_id: ObjectId(req.query._id)});
+        await userModel.deleteOne({_id: new ObjectId(req.query._id)});
         return res.status(200).json({msg: 'Success'});
       }
     } catch (error) {

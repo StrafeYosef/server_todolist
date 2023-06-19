@@ -1,6 +1,7 @@
 const userModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const { OAuth2Client } = require("google-auth-library");
+const { ObjectId } = require("mongodb");
 require("dotenv").config();
 
 exports.userCtrl = {
@@ -106,7 +107,7 @@ exports.userCtrl = {
           token: req.query.adminToken,
         });
         if(!admin || admin.access !== "admin") return res.status(400).json({err: "Not allowed"});
-        await userModel.deleteOne({id: req.query.id});
+        await userModel.deleteOne({_id: ObjectId(req.query._id)});
         return res.status(200).json({msg: 'Success'});
       }
     } catch (error) {

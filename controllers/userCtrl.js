@@ -101,7 +101,6 @@ exports.userCtrl = {
   },
   async deleteUser(req, res) {
     try {
-      console.log(req.body, req.query);
       if (req.query.adminToken) {
         const admin = await userModel.findOne({
           token: req.query.adminToken,

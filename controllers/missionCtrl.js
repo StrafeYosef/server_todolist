@@ -46,4 +46,33 @@ exports.missionCtrl = {
         return res.json({ err: error });
       }
     },
+    async updateMission(req, res) {
+      try {
+        if (req.body.adminToken) {
+          const admin = await userModel.findOne({
+            token: req.body.adminToken,
+          });
+          if (!admin || admin.access !== "admin")
+            return res.status(400).json({ err: "Not allowed" });
+          const post = await userModel.findOne({
+            missionId: req.body.missionId
+          });
+          if (!post) return res.status(400).json({ err: "Post not found" });
+          let currPost = { ...req.body };
+          delete currPost.adminToken;
+          delete currPost._id;
+          currPost = await userModel.findOneAndReplace(
+            { missionId: currPost.missionId },
+            currPost
+          );
+          currPost = await userModel.findOne({
+            missionId: currUser.missionId,
+          });
+          return res.status(200).json({msg: "Success"});
+        }
+      } catch (error) {
+        return res.status(404).json(error);
+      }
+    },
+    
   };

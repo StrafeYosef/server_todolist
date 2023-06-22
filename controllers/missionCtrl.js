@@ -55,14 +55,14 @@ exports.missionCtrl = {
           });
           if (!admin || admin.access !== "admin")
             return res.status(400).json({ err: "Not allowed" });
-          const post = await userModel.findOne({
+          const post = await missionModel.findOne({
             missionId: req.body.missionId
           });
           if (!post) return res.status(400).json({ err: "Post not found" });
           let currPost = { ...req.body };
           delete currPost.adminToken;
           delete currPost._id;
-          currPost = await userModel.findOneAndReplace(
+          currPost = await missionModel.findOneAndReplace(
             { missionId: currPost.missionId },
             currPost
           );

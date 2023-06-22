@@ -66,8 +66,8 @@ exports.missionCtrl = {
             { missionId: currPost.missionId },
             currPost
           );
-          currPost = await userModel.findOne({
-            missionId: currUser.missionId,
+          currPost = await missionModel.findOne({
+            missionId: currPost.missionId,
           });
           return res.status(200).json({msg: "Success"});
         }

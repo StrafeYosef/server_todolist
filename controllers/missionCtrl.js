@@ -9,9 +9,10 @@ exports.missionCtrl = {
         if(!user){
           return res.status(400).json({err:'User not found'});
         }
-        let mission = await missionModel.findOne(req.body);
+        let mission = await missionModel.findOne({missionId: req.body.missionId});
         if(mission){
-          return res.status(400).json({err: 'Duplicate misssion'});
+          mission = {...req.body};
+          mission.missionId++;
         }
         mission = missionModel(req.body);
         mission = await mission.save();

@@ -5,10 +5,17 @@ const { userCtrl } = require('./userCtrl');
 exports.missionCtrl = {
     async addMission(req, res) {
       try {
-        let user = await userModel.findOne({token: req.body.token});
-        if(!user){
-          return res.status(400).json({err:'User not found'});
+        let users = [];
+        for(let i = 0; i < req.body.token.length; i++){
+          users.push(await userModel.find({token: req.body.token[i]}));
         }
+        console.log(users);
+        for(let i = 0; i < users.length; i++){
+          if(!users[i]){
+            return res.status(400).json({err:'User not found'});
+          }        
+        }
+        
         let mission = await missionModel.findOne({missionId: req.body.missionId});
         if(mission){
           mission = {...req.body};
@@ -16,10 +23,12 @@ exports.missionCtrl = {
         }
         mission = missionModel(req.body);
         mission = await mission.save();
-        let currUser = {...user._doc};
-        currUser.newMissions = [...user.newMissions, mission._id];
+        for(let i = 0; i < users.length; i++){
+        let currUser = {...users[i]._doc};
+        currUser.newMissions = [...users[i].newMissions, mission._id];
         delete currUser._id;
-        await userModel.findOneAndReplace({token: mission.token}, currUser);
+        await userModel.findOneAndReplace({token: mission.token}, currUser);  
+        }
         return res.status(200).json(mission);
       } catch (error) {
         return res.status(500).json({err: error});

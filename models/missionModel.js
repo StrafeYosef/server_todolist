@@ -45,6 +45,10 @@ const missionSchema = mongoose.Schema({
     required: true,
     unique: true
   },
+  chat: {
+    type: Object,
+    required: true,
+  },
 });
 
 module.exports = mongoose.model("missions", missionSchema);

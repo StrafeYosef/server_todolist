@@ -23,7 +23,7 @@ const missionSchema = mongoose.Schema({
     required: true,
   },
   responsibility: {
-    type: String,
+    type: Array,
     required: true,
   },
   endedAt: {
@@ -34,8 +34,6 @@ const missionSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  noteResponsibility: String,
-  noteCommander: String,
   missionId: {
     type: String,
     required: true,

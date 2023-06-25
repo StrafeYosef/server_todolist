@@ -9,7 +9,6 @@ exports.missionCtrl = {
         for(let i = 0; i < req.body.token.length; i++){
           users.push(await userModel.find({token: req.body.token[i]}));
         }
-        console.log(users);
         for(let i = 0; i < users.length; i++){
           if(!users[i]){
             return res.status(400).json({err:'User not found'});

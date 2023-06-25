@@ -1,33 +1,30 @@
 const { ObjectId } = require('mongodb');
 const missionModel = require('../models/missionModel');
 const userModel = require('../models/userModel');
-const { userCtrl } = require('./userCtrl');
 exports.missionCtrl = {
     async addMission(req, res) {
       try {
         let users = [];
         for(let i = 0; i < req.body.token.length; i++){
-          users.push(await userModel.find({token: req.body.token[i]}));
+          users[i] = await userModel.findOne({token: req.body.token[i]});
         }
         for(let i = 0; i < users.length; i++){
           if(!users[i]){
             return res.status(400).json({err:'User not found'});
           }        
         }
-        
         let mission = await missionModel.findOne({missionId: req.body.missionId});
         if(mission){
           mission = {...req.body};
           mission.missionId++;
         }
-        mission = missionModel(req.body);
+        mission = await missionModel(req.body);
         mission = await mission.save();
         for(let i = 0; i < users.length; i++){
-        let currUser = {...users[i]._doc};
-        currUser.newMissions = [...users[i].newMissions, mission._id];
-        delete currUser._id;
-        await userModel.findOneAndReplace({token: mission.token}, currUser);  
-        }
+        users[i].newMissions = [...users[i].newMissions, mission._id];
+        delete users[i]._id;
+        await userModel.replaceOne({id: users[i].id}, users[i]);  
+      }
         return res.status(200).json(mission);
       } catch (error) {
         return res.status(500).json({err: error});

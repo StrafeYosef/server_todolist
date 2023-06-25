@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const missionSchema = mongoose.Schema({
   // token of user 
   token: {
-    type: String,
+    type: Array,
     required: true,
   },
   title: {

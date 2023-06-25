@@ -1,10 +1,6 @@
 const mongoose = require("mongoose");
 
 const missionSchema = mongoose.Schema({
-  // givenIn: {
-  //   type: String,
-  //   required: true,
-  // },
   // token of user 
   token: {
     type: String,

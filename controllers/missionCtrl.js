@@ -1,5 +1,6 @@
 const { ObjectId } = require('mongodb');
 const missionModel = require('../models/missionModel');
+const missionArchiveModel = require('../models/missionArchiveModel');
 const userModel = require('../models/userModel');
 exports.missionCtrl = {
     async addMission(req, res) {
@@ -80,5 +81,36 @@ exports.missionCtrl = {
         return res.status(404).json(error);
       }
     },
+    async getArhive(req, res){
+      try {
+        if(req.query.adminToken){
+          admin = await userModel.findOne({token: req.query.adminToken});
+          if(!admin || admin.access !== "admin") return  res.status(400).json({err: "Not allowed"});
+          let archive = await missionArchiveModel.find({});
+          return res.status(200).json(archive);
+        }
+      } catch (error) {
+        return res.status(500).json({err: error});
+      }
+    },
+    async sendToArchive(req, res){
+      try {
+        if(req.body.adminToken){
+          admin = await userModel.findOne({token: req.body.adminToken});
+          if(!admin || admin.access !== "admin") return  res.status(400).json({err: "Not allowed"});
+          let missionArchive = await missionModel.findOne({_id: new ObjectId(req.body._id)});
+          if(!missionArchive) return res.status(404).json({err: 'Not found mission to send'});
+          await missionModel.deleteOne({_id: missionArchive._id});
+          let curr = {...missionArchive._doc};
+          delete curr._id;
+          delete curr.__v;
+          curr = await missionArchiveModel(curr);
+          curr = await curr.save();
+          return res.status(200).json(curr);
+        }
+      } catch (error) {
+        return res.status(500).json({err: error});
+      }
+    }
     
   };

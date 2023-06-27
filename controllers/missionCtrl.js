@@ -32,12 +32,16 @@ exports.missionCtrl = {
       }
     },
     async getAllMissions(req, res) {
-      let user = await userModel.findOne({token: req.query.token});
-      if(!user){
-        return res.status(400).json({err:'User not found'});
+      try {
+        let user = await userModel.findOne({token: req.query.token});
+        if(!user){
+          return res.status(400).json({err:'User not found'});
+        }
+        let missions = await missionModel.find({});
+        return res.status(200).json(missions);
+      } catch (error) {
+        return res.status(400).json({err: error});
       }
-      let missions = await missionModel.find({});
-      return res.status(200).json(missions);
     },
     async deleteMission(req, res) {
       try {

@@ -72,13 +72,31 @@ exports.missionCtrl = {
             { missionId: currPost.missionId },
             currPost
           );
-          currPost = await missionModel.findOne({
-            missionId: currPost.missionId,
-          });
           return res.status(200).json({msg: "Success"});
         }
       } catch (error) {
         return res.status(404).json(error);
+      }
+    },
+    async updateChat(req, res){
+      try {
+        let user = await userModel.findOne({token: req.body.token});
+        if(!user){
+          return res.status(400).json({err:'User not found'});
+        } 
+        const post = await missionModel.findOne({
+          missionId: req.body.missionId
+        });
+        if (!post) return res.status(400).json({ err: "Post not found" });
+        if(!(post.token.find((t)=> t === user.token))) return res.status(400).json({err: 'Not Allowed'});
+        let currPost = { ...req.body };
+        delete currPost._id;
+        currPost = await missionModel.findOneAndReplace(
+          { missionId: currPost.missionId },
+          currPost
+        );
+      } catch (error) {
+        return res.status(400).json({err: error});
       }
     },
     async getArhive(req, res){

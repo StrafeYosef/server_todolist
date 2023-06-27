@@ -92,7 +92,7 @@ exports.missionCtrl = {
           missionId: req.body.missionId
         });
         if (!post) return res.status(400).json({ err: "Post not found" });
-        if(!(post.token.find((t)=> t === user.token))) return res.status(400).json({err: 'Not Allowed'});
+        if(!(post.token.find((t)=> t === user.token)) && user.access !== 'admin') return res.status(400).json({err: 'Not Allowed'});
         let currPost = { ...req.body };
         delete currPost._id;
         currPost = await missionModel.findOneAndReplace(

@@ -93,6 +93,7 @@ exports.missionCtrl = {
         });
         if (!post) return res.status(400).json({ err: "Post not found" });
         if(!(post.token.find((t)=> t === user.token)) && user.access !== 'admin') return res.status(400).json({err: 'Not Allowed'});
+
         let currPost = { ...req.body };
         delete currPost._id;
         currPost = await missionModel.findOneAndReplace(
@@ -123,8 +124,8 @@ exports.missionCtrl = {
           if(!admin || admin.access !== "admin") return  res.status(400).json({err: "Not allowed"});
           let missionArchive = await missionModel.findOne({_id: new ObjectId(req.body._id)});
           if(!missionArchive) return res.status(404).json({err: 'Not found mission to send'});
-          await missionModel.deleteOne({_id: missionArchive._id});
           let curr = {...missionArchive._doc};
+          await missionModel.deleteOne({_id: missionArchive._id});
           delete curr._id;
           delete curr.__v;
           curr = await missionArchiveModel(curr);

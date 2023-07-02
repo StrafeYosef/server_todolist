@@ -28,10 +28,10 @@ exports.missionCtrl = {
         mission = await missionModel(mission);
         mission = await mission.save();
         for(let i = 0; i < users.length; i++){
-        users[i].newMissions = [...users[i].newMissions, mission._id];
-        delete users[i]._id;
-        await userModel.replaceOne({id: users[i].id}, users[i]);  
-      }
+          users[i].newMissions = [...users[i].newMissions, mission._id];
+          delete users[i]._id;
+          await userModel.replaceOne({id: users[i].id}, users[i]);  
+        }
         return res.status(200).json(mission);
       } catch (error) {
         return res.status(500).json({err: error});

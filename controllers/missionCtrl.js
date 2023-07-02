@@ -159,8 +159,9 @@ exports.missionCtrl = {
   }
   exports.getMissions = async(token)=>{
    try {
-     let user = await userModel.findOne({token});
-     if(!user)return null;
+     let user = await userModel.findOne({token: token});
+     if (!user || user.access !== "admin")
+     return res.status(400).json({ err: "Not allowed" });     
      let missions = await missionModel.find({});
      return missions;
    } catch (error) {

@@ -45,6 +45,14 @@ const io = require("socket.io")(server, {
         console.log(error);
       }
     })
+
+    client.on('setNewMission', async (mission, token)=>{
+      const user = await userModel({token: token});
+      if(!user)return;
+      let missions = await missionModel.find({});
+      client.emit('getNewMissions', missions)
+    })
+
       client.on('disconnect', () =>{
         console.log(users);
         users = users.filter((user)=>user.id !== client.id);
@@ -62,6 +70,8 @@ require("dotenv").config();
 const {routesInit} = require('./routes/configRoutes');
 const { getUsers } = require("./controllers/userCtrl");
 const { updateChat, getMissions } = require("./controllers/missionCtrl");
+const missionModel = require("./models/missionModel");
+const userModel = require("./models/userModel");
 app.use(express.json());
 app.use(
   cors({
@@ -76,7 +86,6 @@ server.listen(process.env.PORT, (err) => {
   
   console.log("Server - running.");
 });
-// wsCtrl(app);
 
 
 mongoose

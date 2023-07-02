@@ -5,6 +5,7 @@ const userModel = require('../models/userModel');
 exports.missionCtrl = {
     async addMission(req, res) {
       try {
+        const user = await userModel.findOne({token: req.body.adminToken});
         let users = [];
         for(let i = 0; i < req.body.token.length; i++){
           users[i] = await userModel.findOne({token: req.body.token[i]});
@@ -14,6 +15,7 @@ exports.missionCtrl = {
             return res.status(400).json({err:'User not found'});
           }        
         }
+        if(!user || user.access !== "admin") return  res.status(400).json({err: "Not allowed"});
         let mission = await missionModel.findOne({missionId: req.body.missionId});
         if(mission){
           mission = {...req.body};

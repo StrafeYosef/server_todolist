@@ -16,12 +16,13 @@ exports.missionCtrl = {
           }        
         }
         if(!user || user.access !== "admin") return  res.status(400).json({err: "Not allowed"});
+        mission = {...req.body};
         let mission = await missionModel.findOne({missionId: req.body.missionId});
         if(mission){
-          mission = {...req.body};
           mission.missionId++;
         }
-        mission = await missionModel(req.body);
+        delete mission.adminToken;
+        mission = await missionModel(mission);
         mission = await mission.save();
         for(let i = 0; i < users.length; i++){
         users[i].newMissions = [...users[i].newMissions, mission._id];

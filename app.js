@@ -49,7 +49,9 @@ const io = require("socket.io")(server, {
         console.log(users);
         users = users.filter((user)=>user.id !== client.id);
         console.log('User disconnected');
-        client.emit('disconnected', client.id);
+        client.off('disconnect', () =>{
+          console.log("Disconnect");
+        })
       })
   })
 

@@ -2,7 +2,8 @@ const userModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const { ObjectId } = require("mongodb");
 require("dotenv").config();
-
+var USERS = [];
+exports.users = [...USERS];
 exports.userCtrl = {
   //admin panel
   async setNewUser(req, res) {
@@ -62,6 +63,7 @@ exports.userCtrl = {
         });
         if (newUser.access === "admin") {
           const users = await userModel.find({});
+          USERS = [...users];
           return res.status(200).json(users);
         }
       }
@@ -111,3 +113,12 @@ exports.userCtrl = {
     }
   },
 };
+
+exports.getUsers = async ()=>{
+  try {
+    const users = await userModel.find({});
+    return users;
+  } catch (error) {
+    console.log(error);
+  }
+}

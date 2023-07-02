@@ -1,7 +1,7 @@
 const indexR = require("./index");
 const userR = require("./userRoute");
 const missionR = require("./missionRoute");
-
+const Router = require("express").Router();
 exports.routesInit = (app) => {
   app.use("/", indexR)
   app.use("/user", userR);

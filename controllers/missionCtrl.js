@@ -155,3 +155,13 @@ exports.missionCtrl = {
     console.log(error);
    }
   }
+  exports.getMissions = async(token)=>{
+   try {
+     let user = await userModel.findOne({token});
+     if(!user)return null;
+     let missions = await missionModel.find({});
+     return missions;
+   } catch (error) {
+    console.log(error);
+   }
+  }

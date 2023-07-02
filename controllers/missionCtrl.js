@@ -138,3 +138,20 @@ exports.missionCtrl = {
     }
     
   };
+
+  exports.updateChat = async(newMission)=>{
+   try {
+     let currPost = { ...newMission };
+     delete newMission.chat;
+     delete newMission._id;
+     delete currPost._id;
+     currPost = await missionModel.findOneAndReplace(
+       { missionId: newMission.missionId },
+       currPost
+     );
+     currPost = await missionModel.findOne({ missionId: newMission.missionId });
+     return currPost;
+   } catch (error) {
+    console.log(error);
+   }
+  }

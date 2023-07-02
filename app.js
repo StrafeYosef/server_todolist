@@ -44,11 +44,13 @@ const io = require("socket.io")(server, {
       }
     })
 
-    client.on('setNewMission', async (mission, token)=>{
-      const user = await userModel({token: token});
-      if(!user)return;
-      let missions = await missionModel.find({});
-      client.emit('getNewMissions', missions)
+    client.on('setNewMission', async (token)=>{
+      let missions = await getMissions(token);
+      if(missions){
+        users.map((user, i)=>{
+        io.to(user.id).emit('getNewMissions', {missions})
+        })
+      }
     })
 
       client.on('disconnect', () =>{

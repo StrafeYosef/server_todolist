@@ -35,7 +35,7 @@ const io = require("socket.io")(server, {
           let missions = await getMissions(token);
           if(missions){
             users.map((user, i)=>{
-            io.to(user.id).emit('message', {missions})
+            io.to(user.id).emit('message', {missions, newMission})
             })
           }
         }

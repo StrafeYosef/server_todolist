@@ -31,13 +31,13 @@ const io = require("socket.io")(server, {
         let allUsers = await getUsers();
         let user = allUsers.find(user => user.token == token);
         if(user){
-
           let newMission = await updateChat(mission);
-          if(newMission){
-            console.log(newMission);
+          let missions = await getMissions(token);
+          if(missions){
+            console.log(missions);
 
             users.map((user, i)=>{
-            io.to(user.id).emit('message', newMission)
+            io.to(user.id).emit('message', {newMission , missions})
             })
           }
         }
@@ -61,7 +61,7 @@ const io = require("socket.io")(server, {
 require("dotenv").config();
 const {routesInit} = require('./routes/configRoutes');
 const { getUsers } = require("./controllers/userCtrl");
-const { updateChat } = require("./controllers/missionCtrl");
+const { updateChat, getMissions } = require("./controllers/missionCtrl");
 app.use(express.json());
 app.use(
   cors({

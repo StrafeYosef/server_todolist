@@ -114,11 +114,3 @@ exports.userCtrl = {
   },
 };
 
-exports.getUsers = async ()=>{
-  try {
-    const users = await userModel.find({});
-    return users;
-  } catch (error) {
-    console.log(error);
-  }
-}

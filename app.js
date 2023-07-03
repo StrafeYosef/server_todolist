@@ -22,39 +22,43 @@ const io = require("socket.io")(server, {
       if(!(users.find(user=>user.id === client.id))){
         users[users.length] = user;
         console.log("User connected");
+        console.log( `you have ${users.length} users connected`);
         client.emit("connected", user);
       }
     })
 
-    client.on('send', async({mission, token}) =>{
-      try {
-        let allUsers = await getUsers();
-        let user = allUsers.find(user => user.token == token);
-        if(user){
-          let newMission = await updateChat(mission);
-          let missions = await getMissions(token);
-          if(missions){
-            users.map((user, i)=>{
-            io.to(user.id).emit('message', {missions, newMission})
-            })
-          }
-        }
-      } catch (error) {
-        console.log(error);
-      }
+    client.on('sendMessage',async ({mission, token}) =>{
+      mission = await setChat(token, mission);
+      users.map((user, i)=>{
+        io.to(user.id).emit('getMessage', token)
+      })
     })
 
-    client.on('setNewMission', async (token)=>{
-      let missions = await getMissions(token);
-      if(missions){
+    client.on('sendToArchive', adminToken =>{
+      users.map((user, i)=>{
+        io.to(user.id).emit('getArchive', adminToken);
+      })
+    })
+
+    client.on('updateNewMission', ()=>{
         users.map((user, i)=>{
-        io.to(user.id).emit('getNewMissions', missions)
+        io.to(user.id).emit('updatedNewMission', )
         })
-      }
+    })
+
+    client.on('setNewUser', ()=>{
+        users.map((user, i)=>{
+        io.to(user.id).emit('getNewUser', {})
+        })
+    })
+
+    client.on('updateUser', ()=>{
+        users.map((user, i)=>{
+        io.to(user.id).emit('updatedUser', {})
+        })
     })
 
       client.on('disconnect', () =>{
-        console.log(users);
         users = users.filter((user)=>user.id !== client.id);
         console.log('User disconnected');
       })
@@ -66,7 +70,7 @@ const io = require("socket.io")(server, {
 require("dotenv").config();
 const {routesInit} = require('./routes/configRoutes');
 const { getUsers } = require("./controllers/userCtrl");
-const { updateChat, getMissions } = require("./controllers/missionCtrl");
+const { updateChat, getMissions, setChat } = require("./controllers/missionCtrl");
 const missionModel = require("./models/missionModel");
 const userModel = require("./models/userModel");
 app.use(express.json());

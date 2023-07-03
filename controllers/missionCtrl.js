@@ -28,10 +28,10 @@ exports.missionCtrl = {
         mission = await missionModel(mission);
         mission = await mission.save();
         for(let i = 0; i < users.length; i++){
-        users[i].newMissions = [...users[i].newMissions, mission._id];
-        delete users[i]._id;
-        await userModel.replaceOne({id: users[i].id}, users[i]);  
-      }
+          users[i].newMissions = [...users[i].newMissions, mission._id];
+          delete users[i]._id;
+          await userModel.replaceOne({id: users[i].id}, users[i]);  
+        }
         return res.status(200).json(mission);
       } catch (error) {
         return res.status(500).json({err: error});
@@ -144,31 +144,38 @@ exports.missionCtrl = {
     }
     
   };
+exports.setChat = async (token, mission)=>{
+  try {
+    let currUser = mission.token.find((t)=> t === token);
+    currUser = await userModel.findOne({token: currUser});
+    if(!currUser){
+      currUser = await userModel.findOne({token: token});
+      if(!currUser || !currUser.access === 'admin'){
+        return {err: 'error'};
+      }    
+    }
+  
+    let chat = {...mission.chat};
+    delete mission.chat;
+    let currMission = await missionModel.findOne({
+      missionId: mission.missionId,
+    });
+    currMission = {...currMission?._doc}
+    currMission.chat = {...chat};
+    delete currMission._id;
+    currMission = await missionModel.replaceOne({
+     missionId: currMission.missionId,
+     token: currMission.token,
+     status: currMission.status,
+     endedAt: currMission.endedAt,
+     details: currMission.details,
+     daysLeft: currMission.daysLeft,
+     startedAt: currMission.startedAt,
+     title: currMission.title},
+     currMission);
+    return currMission;
+  } catch (error) {
+    return console.log(error);
+  }
 
-  exports.updateChat = async(newMission)=>{
-   try {
-     let currPost = { ...newMission };
-     delete newMission.chat;
-     delete newMission._id;
-     delete currPost._id;
-     currPost = await missionModel.findOneAndReplace(
-       { missionId: newMission.missionId },
-       currPost
-     );
-     currPost = await missionModel.findOne({ missionId: newMission.missionId });
-     return currPost;
-   } catch (error) {
-    console.log(error);
-   }
-  }
-  exports.getMissions = async(token)=>{
-   try {
-     let user = await userModel.findOne({token: token});
-     if (!user || user.access !== "admin")
-     return res.status(400).json({ err: "Not allowed" });     
-     let missions = await missionModel.find({});
-     return missions;
-   } catch (error) {
-    console.log(error);
-   }
-  }
+}

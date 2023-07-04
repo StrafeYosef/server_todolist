@@ -30,19 +30,19 @@ const io = require("socket.io")(server, {
     client.on('sendMessage',async ({mission, token}) =>{
       mission = await setChat(token, mission);
       users.map((user, i)=>{
-        io.to(user.id).emit('getMessage', token)
+        io.to(user.id).emit('getMessage', {})
       })
     })
 
-    client.on('sendToArchive', adminToken =>{
+    client.on('sendToArchive',  ()=>{
       users.map((user, i)=>{
-        io.to(user.id).emit('getArchive', adminToken);
+        io.to(user.id).emit('getArchive', {});
       })
     })
 
     client.on('updateNewMission', ()=>{
         users.map((user, i)=>{
-        io.to(user.id).emit('updatedNewMission', )
+        io.to(user.id).emit('updatedNewMission', {})
         })
     })
 

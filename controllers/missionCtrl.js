@@ -141,6 +141,28 @@ exports.missionCtrl = {
       } catch (error) {
         return res.status(500).json({err: error});
       }
+    },
+    async sendToConfirm(req, res){
+      try {
+        let user = await userModel.findOne({token: req.body.uToken});
+        let currMission = {...req.body};
+        delete currMission.uToken;
+        let mission = await missionModel.findOne({
+          missionId: currMission.missionId,
+          token: [...currMission.token],
+          details: currMission.details,
+          daysLeft: currMission.daysLeft,
+          title: currMission.title,
+          chat: {...currMission.chat}
+        });
+        delete currMission._id;
+        if(user && (user.access === 'admin' || mission.token.find((t)=> t === user.token))){
+          mission = await missionModel.replaceOne({missionId: mission.missionId}, currMission);
+        }
+        return res.status(200).json({msg: "Success"});
+      } catch (error) {
+        return res.status(500).json({err: error});
+      }
     }
     
   };

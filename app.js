@@ -58,6 +58,12 @@ const io = require("socket.io")(server, {
         })
     })
 
+    client.on('sendToConfirm', ()=>{
+        users.map((user, i)=>{
+        io.to(user.id).emit('getConfirmMission', {})
+        })
+    })
+
       client.on('disconnect', () =>{
         users = users.filter((user)=>user.id !== client.id);
         console.log('User disconnected');

@@ -88,10 +88,11 @@ app.use(
   })
 );
 routesInit(app);
-server.listen(process.env.PORT, (err) => {
+const PORT = process.env.PORT || 5500;
+server.listen(PORT, (err) => {
   if(err) return console.log(err);
   
-  console.log("Server - running.");
+  console.log("Server - running on " + PORT);
 });
 
 

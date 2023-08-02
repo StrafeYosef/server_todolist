@@ -69,7 +69,7 @@ exports.missionCtrl = {
           const admin = await userModel.findOne({
             token: req.body.adminToken,
           });
-          if (!admin || admin.access !== "admin")
+          if (!admin)
             return res.status(400).json({ err: "Not allowed" });
           const post = await missionModel.findOne({
             missionId: req.body.missionId
@@ -78,10 +78,17 @@ exports.missionCtrl = {
           let currPost = { ...req.body };
           delete currPost.adminToken;
           delete currPost._id;
-          currPost = await missionModel.findOneAndReplace(
-            { missionId: currPost.missionId },
-            currPost
-          );
+          // if(admin.access !== "admin"){
+          //   currPost = await missionModel.findOneAndReplace(
+          //     { missionId: currPost.missionId },{status: req.body.status}
+              
+          //   );
+          // } else {
+            currPost = await missionModel.findOneAndReplace(
+              { missionId: currPost.missionId },
+              currPost
+            );
+          // }
           return res.status(200).json({msg: "Success"});
         }
       } catch (error) {
@@ -156,7 +163,7 @@ exports.missionCtrl = {
           chat: {...currMission.chat}
         });
         delete currMission._id;
-        if(user && (user.access === 'admin' || mission.token.find((t)=> t === user.token))){
+        if(user){
           mission = await missionModel.replaceOne({missionId: mission.missionId}, currMission);
         }
         return res.status(200).json({msg: "Success"});

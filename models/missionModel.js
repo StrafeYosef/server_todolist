@@ -43,6 +43,9 @@ const missionSchema = mongoose.Schema({
     type: Object,
     required: true,
   },
+  changeStatus:{
+    type: String,
+  },
 });
 
 module.exports = mongoose.model("missions", missionSchema);

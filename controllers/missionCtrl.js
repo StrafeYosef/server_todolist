@@ -3,40 +3,49 @@ const missionModel = require('../models/missionModel');
 const missionArchiveModel = require('../models/missionArchiveModel');
 const userModel = require('../models/userModel');
 exports.missionCtrl = {
-    async addMission(req, res) {
-      try {
-        const user = await userModel.findOne({token: req.body.adminToken});
-        let users = [];
-        for(let i = 0; i < req.body.token.length; i++){
-          users[i] = await userModel.findOne({token: req.body.token[i]});
-        }
-        for(let i = 0; i < users.length; i++){
-          if(!users[i]){
-            return res.status(400).json({err:'User not found'});
-          }        
-        }
-        if(!user || user.access !== "admin") return  res.status(400).json({err: "Not allowed"});
-        let mission = await missionModel.findOne({missionId: req.body.missionId});
-        if(mission){
-          mission = {...req.body};
-          delete mission.adminToken;
-          mission.missionId++;
-        } else {
-          mission = {...req.body};
-          delete mission.adminToken;
-        }
-        mission = await missionModel(mission);
-        mission = await mission.save();
-        for(let i = 0; i < users.length; i++){
-          users[i].newMissions = [...users[i].newMissions, mission._id];
-          delete users[i]._id;
-          await userModel.replaceOne({id: users[i].id}, users[i]);  
-        }
-        return res.status(200).json(mission);
-      } catch (error) {
-        return res.status(500).json({err: error});
+  async addMission(req, res) {
+    try {
+      const user = await userModel.findOne({token: req.body.adminToken});
+      let users = [];
+      for(let i = 0; i < req.body.token.length; i++){
+        users[i] = await userModel.findOne({token: req.body.token[i]});
       }
-    },
+      for(let i = 0; i < users.length; i++){
+        if(!users[i]){
+          return res.status(400).json({err:'User not found'});
+        }        
+      }
+      if(!user || user.access !== "admin") return  res.status(400).json({err: "Not allowed"});
+      let mission = await missionModel.findOne({missionId: req.body.missionId});
+      if(mission){
+        mission = {...req.body};
+        delete mission.adminToken;
+        mission.missionId++;
+      } else {
+        mission = {...req.body};
+        delete mission.adminToken;
+      }
+      mission = await missionModel(mission);
+      mission = await mission.save();
+      for(let i = 0; i < users.length; i++){
+        users[i].newMissions = [...users[i].newMissions, mission._id];
+        delete users[i]._id;
+        await userModel.replaceOne({id: users[i].id}, users[i]);  
+      }
+      if(req.files.length > 0){
+        for (let key in req.files) {
+          // await uploadFiles(req, key,'missions360_DB/' + req.files[key].name);
+          req.files[key].mv('missions360_DB/' + req.files[key].name, err=>{
+            if(err) return console.log(err);
+            console.log('Successfully uploaded');
+          })
+        }
+      }
+      return res.status(200).json(mission);
+    } catch (error) {
+      return res.status(500).json({err: error});
+    }
+  },
     async getAllMissions(req, res) {
       try {
         let user = await userModel.findOne({token: req.query.token});
@@ -66,10 +75,10 @@ exports.missionCtrl = {
     async updateMission(req, res) {
       try {
         if (req.body.adminToken) {
-          const admin = await userModel.findOne({
+          const user = await userModel.findOne({
             token: req.body.adminToken,
           });
-          if (!admin)
+          if (!user || user.access !== "admin")
             return res.status(400).json({ err: "Not allowed" });
           const post = await missionModel.findOne({
             missionId: req.body.missionId
@@ -78,17 +87,10 @@ exports.missionCtrl = {
           let currPost = { ...req.body };
           delete currPost.adminToken;
           delete currPost._id;
-          // if(admin.access !== "admin"){
-          //   currPost = await missionModel.findOneAndReplace(
-          //     { missionId: currPost.missionId },{status: req.body.status}
-              
-          //   );
-          // } else {
             currPost = await missionModel.findOneAndReplace(
               { missionId: currPost.missionId },
               currPost
             );
-          // }
           return res.status(200).json({msg: "Success"});
         }
       } catch (error) {
@@ -162,8 +164,9 @@ exports.missionCtrl = {
           title: currMission.title,
           chat: {...currMission.chat}
         });
+        if(!mission) return res.status(400).json({error: "Not allowed or not found"});
         delete currMission._id;
-        if(user){
+        if(user && (currMission.status === "ממתין לאישור")){
           mission = await missionModel.replaceOne({missionId: mission.missionId}, currMission);
         }
         return res.status(200).json({msg: "Success"});

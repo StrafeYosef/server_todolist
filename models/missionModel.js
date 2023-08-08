@@ -46,6 +46,15 @@ const missionSchema = mongoose.Schema({
   changeStatus:{
     type: String,
   },
+  levelOne:{
+    type: String,
+  },
+  levelTwo:{
+    type: String,
+  },
+  levelThree:{
+    type: String,
+  },
 });
 
 module.exports = mongoose.model("missions", missionSchema);

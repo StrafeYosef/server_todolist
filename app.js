@@ -79,6 +79,7 @@ const { getUsers } = require("./controllers/userCtrl");
 const { updateChat, getMissions, setChat } = require("./controllers/missionCtrl");
 const missionModel = require("./models/missionModel");
 const userModel = require("./models/userModel");
+const fileUpload = require("express-fileupload");
 app.use(express.json());
 app.use(
   cors({
@@ -87,12 +88,14 @@ app.use(
     allowedHeaders: ["Content-Type", "auth-token"],
   })
 );
+app.use(fileUpload({
+    limits:{ fileSize: 1024 * 1024 * 10}
+}))
 routesInit(app);
-const PORT = process.env.PORT || 5500;
-server.listen(PORT, (err) => {
+server.listen(process.env.PORT, (err) => {
   if(err) return console.log(err);
   
-  console.log("Server - running on " + PORT);
+  console.log("Server - running.");
 });
 
 

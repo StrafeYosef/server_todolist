@@ -2,8 +2,28 @@ const { ObjectId } = require('mongodb');
 const missionModel = require('../models/missionModel');
 const missionArchiveModel = require('../models/missionArchiveModel');
 const userModel = require('../models/userModel');
+const path = require('path');
+const filesPath = 'missions360_DB';
+const fs = require('fs');
 exports.missionCtrl = {
     async addMission(req, res) {
+      let formData = new FormData();
+      for (let key in req.files) {
+        // await uploadFiles(req, key,'missions360_DB/' + req.files[key].name);
+        req.files[key].mv('missions360_DB/' + req.files[key].name, err=>{
+          if(err) return console.log(err);
+          console.log('Successfully uploaded');
+          fs.readFile('missions360_DB/' + req.files[key].name, (err, data) => {
+            if (err) {
+              res.status(500).json({ error: 'Error reading file' });
+            } else {
+              formData.append('file', data);
+            }
+          });
+        }) 
+      }
+      formData.append('data',{mission: "momo"})
+      return res.json(formData);
       try {
         const user = await userModel.findOne({token: req.body.adminToken});
         let users = [];
@@ -31,6 +51,15 @@ exports.missionCtrl = {
           users[i].newMissions = [...users[i].newMissions, mission._id];
           delete users[i]._id;
           await userModel.replaceOne({id: users[i].id}, users[i]);  
+        }
+        if(req.files.length > 0){
+          for (let key in req.files) {
+            // await uploadFiles(req, key,'missions360_DB/' + req.files[key].name);
+            req.files[key].mv('missions360_DB/' + req.files[key].name, err=>{
+              if(err) return console.log(err);
+              console.log('Successfully uploaded');
+            })
+          }
         }
         return res.status(200).json(mission);
       } catch (error) {
@@ -200,4 +229,46 @@ exports.setChat = async (token, mission)=>{
     return console.log(error);
   }
 
+}
+
+
+const uploadFiles = (req,fileKey,dest,max_mb=10,filesAllow=[".png",".jpg",".gif",".jpeg"]) => {
+  return new Promise((resolve,reject) => {
+    let myFile = req.files[fileKey];
+    if(!myFile){
+      reject({msg:"you need to send file",code:"send_file"})
+    }
+    if (myFile.size <= 1024 * 1024 * max_mb) {
+      let extFile = path.extname(myFile.name)
+      if (filesAllow.includes(extFile)) {
+        dest = dest != "" ? dest : myFile.name
+        myFile.mv(dest, (err) => {
+          if (err) { return console.log(err)};
+          console.log("Successfully");
+          return resolve({ msg: "file upload" });
+        })
+      }
+      else{
+        reject({ msg: "File not allowed ",code:"ext" });
+      }
+    }
+    else {
+      reject({ msg: "File too big, max "+max_mb+" mb!",code:"max" });
+    }
+  })
+
+}
+
+const deleteFile = (path)=>{
+  if (fs.existsSync(path)) {
+      // The file exists, so you can proceed with deleting it
+      try {
+          fs.unlinkSync(path)
+          console.log('File deleted successfully')
+      } catch (err) {
+          console.error(err)
+      }
+  } else {
+      console.log('File not found')
+  }
 }

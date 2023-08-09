@@ -19,12 +19,11 @@ exports.missionCtrl = {
       let mission = await missionModel.findOne({missionId: req.body.missionId});
       if(mission){
         mission = {...req.body};
-        delete mission.adminToken;
         mission.missionId++;
       } else {
         mission = {...req.body};
-        delete mission.adminToken;
       }
+      delete mission.adminToken;
       mission = await missionModel(mission);
       mission = await mission.save();
       for(let i = 0; i < users.length; i++){

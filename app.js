@@ -80,6 +80,7 @@ const { updateChat, getMissions, setChat } = require("./controllers/missionCtrl"
 const missionModel = require("./models/missionModel");
 const userModel = require("./models/userModel");
 const fileUpload = require("express-fileupload");
+const PORT = process.env.PORT || 3005;
 app.use(express.json());
 app.use(
   cors({
@@ -92,10 +93,10 @@ app.use(fileUpload({
     limits:{ fileSize: 1024 * 1024 * 10}
 }))
 routesInit(app);
-server.listen(process.env.PORT, (err) => {
+server.listen(PORT, (err) => {
   if(err) return console.log(err);
   
-  console.log("Server - running.");
+  console.log("Server - running on PORT " + PORT);
 });
 
 

@@ -1,7 +1,17 @@
 const { ObjectId } = require('mongodb');
+const mongoDB = require('mongodb').MongoClient;
+const DB = new mongoDB(process.env.DB_CONNECTION, { useUnifiedTopology: true });
 const missionModel = require('../models/missionModel');
 const missionArchiveModel = require('../models/missionArchiveModel');
 const userModel = require('../models/userModel');
+require("dotenv").config();
+
+(async function momo(){
+  console.log(await DB.db('test').collection("momo").insertOne({name: "Moshe"}));
+  // let res = await DB.collection('users');
+  // console.log(await res.find({}));
+})()
+
 exports.missionCtrl = {
   async addMission(req, res) {
     try {

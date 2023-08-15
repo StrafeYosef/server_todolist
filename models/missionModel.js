@@ -48,12 +48,19 @@ const missionSchema = mongoose.Schema({
   },
   levelOne:{
     type: String,
+    required: true,
   },
   levelTwo:{
     type: String,
+    required: true,
   },
   levelThree:{
     type: String,
+    required: true,
+  },
+  levelFour:{
+    type: String,
+    required: true,
   },
 });
 

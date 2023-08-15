@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const missionArchiveSchema = mongoose.Schema({
-  // token of user 
+  // token of user
   token: {
     type: Array,
     required: true,
@@ -37,13 +37,25 @@ const missionArchiveSchema = mongoose.Schema({
   missionId: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
   chat: {
     type: Object,
     required: true,
   },
-  changeStatus:{
+  changeStatus: {
+    type: String,
+  },
+  levelOne: {
+    type: String,
+  },
+  levelTwo: {
+    type: String,
+  },
+  levelThree: {
+    type: String,
+  },
+  levelFour: {
     type: String,
   },
 });

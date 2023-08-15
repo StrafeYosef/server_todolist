@@ -14,6 +14,7 @@ require("dotenv").config();
 
 exports.missionCtrl = {
   async addMission(req, res) {
+    console.log(req.body);
     try {
       const user = await userModel.findOne({token: req.body.adminToken});
       let users = [];

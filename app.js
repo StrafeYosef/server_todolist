@@ -30,19 +30,19 @@ const io = require("socket.io")(server, {
     client.on('sendMessage',async ({mission, token}) =>{
       mission = await setChat(token, mission);
       users.map((user, i)=>{
-        io.to(user.id).emit('getMessage', token)
+        io.to(user.id).emit('getMessage', {})
       })
     })
 
-    client.on('sendToArchive', adminToken =>{
+    client.on('sendToArchive',  ()=>{
       users.map((user, i)=>{
-        io.to(user.id).emit('getArchive', adminToken);
+        io.to(user.id).emit('getArchive', {});
       })
     })
 
     client.on('updateNewMission', ()=>{
         users.map((user, i)=>{
-        io.to(user.id).emit('updatedNewMission', )
+        io.to(user.id).emit('updatedNewMission', {})
         })
     })
 
@@ -55,6 +55,12 @@ const io = require("socket.io")(server, {
     client.on('updateUser', ()=>{
         users.map((user, i)=>{
         io.to(user.id).emit('updatedUser', {})
+        })
+    })
+
+    client.on('sendToConfirm', ()=>{
+        users.map((user, i)=>{
+        io.to(user.id).emit('getConfirmMission', {})
         })
     })
 
@@ -73,6 +79,8 @@ const { getUsers } = require("./controllers/userCtrl");
 const { updateChat, getMissions, setChat } = require("./controllers/missionCtrl");
 const missionModel = require("./models/missionModel");
 const userModel = require("./models/userModel");
+const fileUpload = require("express-fileupload");
+const PORT = process.env.PORT || 3005;
 app.use(express.json());
 app.use(
   cors({
@@ -81,11 +89,14 @@ app.use(
     allowedHeaders: ["Content-Type", "auth-token"],
   })
 );
+app.use(fileUpload({
+    limits:{ fileSize: 1024 * 1024 * 10}
+}))
 routesInit(app);
-server.listen(process.env.PORT, (err) => {
+server.listen(PORT, (err) => {
   if(err) return console.log(err);
   
-  console.log("Server - running.");
+  console.log("Server - running on PORT " + PORT);
 });
 
 
